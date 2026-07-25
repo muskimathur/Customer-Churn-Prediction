@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Churn Predictor | SecureBank Analytics</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- ambient gradient background -->
+<div class="bg-mesh">
+  <span class="blob blob-1"></span>
+  <span class="blob blob-2"></span>
+  <span class="blob blob-3"></span>
+</div>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="navbar glass">
+  <div class="navbar-inner">
+    <div class="nav-brand">
+      <span class="nav-mark"><i class="bi bi-bank2"></i></span>
+      <span>SecureBank <b>Analytics</b></span>
+    </div>
+    <div class="nav-links">
+      <a class="active"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+      <a><i class="bi bi-graph-up-arrow"></i> Insights</a>
+      <a><i class="bi bi-shield-check"></i> Trust &amp; Safety</a>
+    </div>
+    <div class="nav-status"><span class="dot"></span> Model Online</div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="hero-text">
+      <span class="hero-eyebrow"><i class="bi bi-stars"></i> AI-POWERED RETENTION ENGINE</span>
+      <h1>Predict customer churn <span>before it happens.</span></h1>
+      <p>An artificial neural network trained on historical banking data flags at-risk customers in real time — so your relationship team can step in first.</p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-pill">
+        <i class="bi bi-bullseye"></i>
+        <div><b>{{ metrics.accuracy }}</b><span>Test Accuracy</span></div>
+      </div>
+      <div class="stat-pill">
+        <i class="bi bi-graph-up"></i>
+        <div><b>{{ metrics.roc_auc }}</b><span>ROC-AUC</span></div>
+      </div>
+      <div class="stat-pill">
+        <i class="bi bi-cpu"></i>
+        <div><b>{{ metrics.model_type }}</b><span>Model Type</span></div>
+      </div>
+      <div class="stat-pill">
+        <i class="bi bi-database-fill"></i>
+        <div><b>{{ metrics.train_size }}</b><span>Records Trained</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ MAIN GRID ============ -->
+  <main class="dashboard-grid">
+
+    <!-- ---- FORM CARD (sidebar-style) ---- -->
+    <section class="card glass form-card">
+      <div class="card-head">
+        <h2><i class="bi bi-person-vcard"></i> Customer Profile</h2>
+        <p>Fill in the account details to run a live prediction</p>
+      </div>
+
+      <form id="churn-form">
+
+        <div class="field-block">
+          <span class="field-label">Credit Score <em id="credit-score-out">650</em></span>
+          <input type="range" id="credit_score" min="300" max="900" value="650" step="1" class="slider">
+        </div>
+
+        <div class="two-col">
+          <div class="field-block">
+            <span class="field-label">Geography</span>
+            <div class="select-wrap">
+              <i class="bi bi-geo-alt-fill"></i>
+              <select id="geography">
+                <option value="France" selected>France</option>
+                <option value="Germany">Germany</option>
+                <option value="Spain">Spain</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-block">
+            <span class="field-label">Gender</span>
+            <div class="select-wrap">
+              <i class="bi bi-person-fill"></i>
+              <select id="gender">
+                <option value="Female" selected>Female</option>
+                <option value="Male">Male</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-block">
+          <span class="field-label">Age <em id="age-out">38</em></span>
+          <input type="range" id="age" min="18" max="100" value="38" step="1" class="slider">
+        </div>
+
+        <div class="field-block">
+          <span class="field-label">Tenure (years with bank) <em id="tenure-out">5</em></span>
+          <input type="range" id="tenure" min="0" max="10" value="5" step="1" class="slider">
+        </div>
+
+        <div class="two-col">
+          <div class="field-block">
+            <span class="field-label">Account Balance ($)</span>
+            <div class="input-wrap">
+              <i class="bi bi-currency-dollar"></i>
+              <input type="number" id="balance" min="0" max="300000" step="500" value="75000.00">
+            </div>
+          </div>
+          <div class="field-block">
+            <span class="field-label">Estimated Salary ($)</span>
+            <div class="input-wrap">
+              <i class="bi bi-cash-stack"></i>
+              <input type="number" id="estimated_salary" min="0" max="300000" step="500" value="100000.00">
+            </div>
+          </div>
+        </div>
+
+        <div class="field-block">
+          <span class="field-label">Number of Products <em id="products-out">2</em></span>
+          <input type="range" id="num_products" min="1" max="4" value="2" step="1" class="slider">
+        </div>
+
+        <div class="two-col">
+          <div class="field-block">
+            <span class="field-label">Has Credit Card?</span>
+            <div class="toggle-pair" data-target="has_cr_card">
+              <button type="button" class="toggle-btn active" data-value="1"><i class="bi bi-credit-card-fill"></i> Yes</button>
+              <button type="button" class="toggle-btn" data-value="0">No</button>
+            </div>
+          </div>
+          <div class="field-block">
+            <span class="field-label">Active Member?</span>
+            <div class="toggle-pair" data-target="is_active">
+              <button type="button" class="toggle-btn active" data-value="1"><i class="bi bi-lightning-charge-fill"></i> Yes</button>
+              <button type="button" class="toggle-btn" data-value="0">No</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="predict-btn" id="predict-btn">
+          <span class="btn-label"><i class="bi bi-search"></i> Predict Churn Risk</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+
+        <div class="progress-track" id="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ---- RESULT CARD ---- -->
+    <section class="card glass result-card-outer">
+      <div class="card-head">
+        <h2><i class="bi bi-magic"></i> Prediction Result</h2>
+        <p>Live output from the neural network</p>
+      </div>
+
+      <div id="result-area">
+        <div class="empty-state">
+          <div class="empty-icon"><i class="bi bi-cpu"></i></div>
+          <p>Fill in the customer profile and click <b>Predict Churn Risk</b> to see the model's live output here.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- SNAPSHOT CARD ---- -->
+    <section class="card glass snapshot-card">
+      <div class="card-head">
+        <h2><i class="bi bi-clipboard-data"></i> Customer Snapshot</h2>
+        <p>Current input values sent to the model</p>
+      </div>
+      <div class="snapshot-grid" id="snapshot-grid">
+        <div class="snap-item"><i class="bi bi-award"></i><div><span>Credit Score</span><b id="snap-credit">650</b></div></div>
+        <div class="snap-item"><i class="bi bi-geo-alt"></i><div><span>Geography</span><b id="snap-geo">France</b></div></div>
+        <div class="snap-item"><i class="bi bi-person"></i><div><span>Gender</span><b id="snap-gender">Female</b></div></div>
+        <div class="snap-item"><i class="bi bi-calendar3"></i><div><span>Age</span><b id="snap-age">38 yrs</b></div></div>
+        <div class="snap-item"><i class="bi bi-clock-history"></i><div><span>Tenure</span><b id="snap-tenure">5 yrs</b></div></div>
+        <div class="snap-item"><i class="bi bi-wallet2"></i><div><span>Balance</span><b id="snap-balance">$75,000.00</b></div></div>
+        <div class="snap-item"><i class="bi bi-box-seam"></i><div><span>Products</span><b id="snap-products">2</b></div></div>
+        <div class="snap-item"><i class="bi bi-credit-card"></i><div><span>Credit Card</span><b id="snap-cc">Yes</b></div></div>
+        <div class="snap-item"><i class="bi bi-lightning-charge"></i><div><span>Active Member</span><b id="snap-active">Yes</b></div></div>
+        <div class="snap-item"><i class="bi bi-cash-stack"></i><div><span>Est. Salary</span><b id="snap-salary">$100,000.00</b></div></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer glass">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="nav-mark small"><i class="bi bi-bank2"></i></span>
+        <div>
+          <b>SecureBank Analytics</b>
+          <p>Internal decision-support tool. Predictions are model estimates, not financial advice.</p>
+        </div>
+      </div>
+      <div class="footer-dev">
+        <p>Built with <i class="bi bi-heart-fill" style="color:#ef4444;"></i> using Flask, TensorFlow &amp; a hand-crafted UI</p>
+        <div class="footer-icons">
+          <a href="#"><i class="bi bi-github"></i></a>
+          <a href="#"><i class="bi bi-linkedin"></i></a>
+          <a href="#"><i class="bi bi-envelope-fill"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
